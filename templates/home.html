@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Przegląd kursów{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course_overview.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Przegląd kursów</h1>
+<div class="filters">
+    <select aria-label="Filtruj kursy">
+        <option>Wszystkie</option>
+        <option>Elektronika</option>
+        <option>Telekomunikacja</option>
+        <option>Programowanie</option>
+    </select>
+    <input type="text" placeholder="Wyszukaj" aria-label="Wyszukaj kursy">
+    <select aria-label="Sortuj kursy">
+        <option>Sortuj wg nazwy kursu</option>
+        <option>Sortuj wg postępu</option>
+        <option>Sortuj wg kategorii</option>
+    </select>
+</div>
+<div class="course-grid">
+    {% for course in courses %}
+    <a href="#" class="course-card" aria-label="Zobacz szczegóły kursu: {{ course.title }}">
+        <div class="course-image" style="background-image: url('{{ course.image_url }}');" role="img" aria-label="{{ course.title }}"></div>
+        <div class="course-info">
+            <h2 class="course-title">{{ course.title }}</h2>
+            <div class="course-category">{{ course.category }}</div>
+            <div class="course-progress">{{ course.progress }}% ukończenia</div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: {{ course.progress }}%;"></div>
+            </div>
+        </div>
+        <div class="course-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/course_overview.js' %}"></script>
+{% endblock %}
