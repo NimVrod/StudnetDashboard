@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Przegląd kursów{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <img src="{{ user.profile_image }}" alt="{{ user.username }}'s profile picture" class="profile-image-container">
+            <h1>{{ user.username }}'s Profile</h1>
+        </div>
+    <div class="profile-content">
+        <section class="profile-info">
+            <h2>Personal Information</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="{{ user.username }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_new_password">Confirm new Password</label>
+                    <input type="password" id="confirm_new_password" name="confirm_new_password">
+                </div>
+                <div class="form-group">
+                    <label for="current_password">Current password</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                <div class="button-list">
+                    <button type="submit" class="button">Update Profile</button>
+                    <button type="button" class="button" id="delete-account">Delete Account</button>
+                    <button type="button" class="button" id="logout">Logout</button>
+                </div>
+                
+            </form>
+        </section>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}

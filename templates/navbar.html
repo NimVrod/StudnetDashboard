@@ -1,15 +1,15 @@
 <nav class="navbar">
     <ul>
-        <li><a href="#">Strona główna</a></li>
+        <li><a href="/">Strona główna</a></li>
         <li><a href="#">Kursy</a></li>
-        <li><a href="#">O nas</a></li>
+        <li><a href="/admin/">Admin</a></li>
         <li><a href="#">Kontakt</a></li>
     </ul>
     <div style="display: flex; align-items: center;">
         <button class="theme-toggle" aria-label="Przełącz tryb ciemny">🌓</button>
-        <div class="profile">
+        <a class="profile" href="/profile/">
             <img src="{{ profile_image_url }}" alt="Zdjęcie profilowe" class="profile-image">
             <span>{{ user_name }}</span>
-        </div>
+        </a>
     </div>
 </nav>

@@ -1,0 +1,108 @@
+.course-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.course-header h1 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.course-meta {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.course-description h2 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.markdown-body {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.course-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--navbar-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--progress-fill);
+}
+
+.btn-secondary {
+    background-color: var(--card-background);
+    color: var(--navbar-color);
+    border: 1px solid var(--navbar-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--background-color);
+}
+
+/* EasyMDE overrides */
+.EasyMDEContainer {
+    border-color: var(--input-border);
+}
+
+.EasyMDEContainer .CodeMirror {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border-color: var(--input-border);
+}
+
+.editor-toolbar {
+    background-color: var(--background-color);
+    border-color: var(--input-border);
+}
+
+.editor-toolbar button {
+    color: var(--text-color) !important;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background-color: var(--navbar-color);
+    color: white !important;
+}
+
+/* New styles for create course button */
+.create-course-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+#create-course {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+}

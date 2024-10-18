@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.name }} - Course Overview{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="course-detail-container">
+    <div class="course-header">
+        <h1>{{ course.name }}</h1>
+        <button id="edit-toggle" class="btn-secondary">Edit Mode</button>
+    </div>
+    <div class="course-description">
+        <h2>Course Description</h2>
+        <div id="markdown-content" class="markdown-body"></div>
+        <textarea id="markdown-editor" style="display: none">{{ course.description }}</textarea>
+    </div>
+    <div class="course-actions">
+        <button id="save-changes" class="btn-primary" style="display: none;">Save Changes</button>
+        <button class="btn-primary">Enroll Now</button>
+    </div>
+    <span id="content" style="display: none;">{{ course.description }}</span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'js/course.js' %}"></script>
+{% endblock %}
