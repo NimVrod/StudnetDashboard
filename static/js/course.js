@@ -1,5 +1,21 @@
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
+function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("course.js loaded");
 
@@ -40,5 +56,21 @@ document.addEventListener('DOMContentLoaded', function() {
         markdown.style.display = "block";
         editButton.innerHTML = "Edit";
         saveButton.style.display = "none";
+
+        // Send changes to server
+        const csrftoken = getCookie('csrftoken');
+        fetch(window.location.pathname, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_id: window.location.pathname.split("/")[2],
+                course_description: text
+            })
+        }).then(response => {
+            console.log(response);
+        });
     });
 });

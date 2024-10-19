@@ -17,9 +17,15 @@ class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     bio = models.CharField(max_length=1000)
 
+    def __str__(self):
+        return self.user.username
+
 
 class CourseStudent(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    permission = models.CharField(choices=[("owner", "Owner"), ('viewer', 'Viewer'), ('editor', 'Editor')],  max_length=20)
+    permission = models.IntegerField(choices=[(2, 'owner'), (1, 'editor'), (0, 'viewer')])
+
+    def __str__(self):
+        return self.student.user.username + ' - ' + self.course.name
 

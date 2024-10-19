@@ -32,6 +32,7 @@
 .markdown-body {
     color: var(--text-color);
     line-height: 1.6;
+    background-color: var(--progress-background);
 }
 
 .course-actions {

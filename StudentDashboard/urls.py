@@ -28,4 +28,5 @@ urlpatterns = [
     path('api/logout/', views.api_logout, name='logout'),
     path('profile/api/logout', views.api_logout, name='logout'),
     path('course/<int:course_id>/', views.course, name='course'),
+    path('course/create_course/', views.create_course, name='create_course'),
 ]

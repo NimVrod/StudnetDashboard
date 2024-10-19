@@ -9,16 +9,17 @@ from StudentDashboard.models import Student, CourseStudent, Course
 
 
 def home(request):
-    courses = [
-        {
-            'title': 'Elementy Elektroniczne EiT 23/24',
-            'category': 'Elektronika i Telekomunikacja',
-            'progress': 11,
-            'image_url': '/static/images/course1.jpg',
-        },
-        # Add more course data as needed
-    ]
+
+    courses = Course.objects.filter(public=True)
+    courses = list(courses)
+    if request.user.is_authenticated:
+        permissions = CourseStudent.objects.filter(student=Student.objects.get(user=request.user))
+        for permission in permissions:
+            if permission.permission >= 0:
+                courses.append(Course.objects.get(id=permission.course.id))
     return render(request, 'home.html', {'courses': courses})
+
+
 
 def api_login(request):
     if request.user.is_authenticated:
@@ -76,13 +77,13 @@ def profile(request):
         return redirect('login')
 
 
-
+    student = Student.objects.get(user=request.user)
     user = {
-        'username': 'johndoe',
-        'first_name': 'John',
-        'last_name': 'Doe',
-        'email': 'test@gmail.com',
-        'bio' : 'I am a student at the University of Warsaw',
+        'username': request.user.username,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'email': request.user.email,
+        'bio' : student.bio,
         'image_url': "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o",
     }
     return render(request, 'profile.html', {'user': user})
@@ -114,16 +115,26 @@ def leave_course(request):
     return HttpResponse('Course left successfully')
 
 def create_course(request):
-    if request.method != 'POST':
-        return HttpResponse('Method not allowed', status=405)
+    if not request.user.is_authenticated:
+        return redirect('login')
 
-    course_name = request.POST.get('course_name')
-    course_description = request.POST.get('course_description')
+    if request.method != 'POST':
+        return render(request, 'course_create.html')
+
+    course_name = request.POST.get('course-name')
+    course_description = request.POST.get('course-description')
+    is_public = request.POST.get('is-public')
+
+    if is_public == 'on':
+        is_public = True
+    else:
+        is_public = False
+
     if not request.user.is_authenticated:
         return HttpResponse('You need to be logged in to create a course', status=401)
-    t = Course.objects.create(course_name=course_name, course_description=course_description)
-    CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=t, permission='owner')
-    return HttpResponse('Course created successfully')
+    t = Course.objects.create(name=course_name, description=course_description, public=is_public)
+    CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=t, permission=2)
+    return redirect('course', course_id=t.id)
 
 def course(request, course_id):
     c = Course.objects.get(id=course_id)
@@ -131,13 +142,33 @@ def course(request, course_id):
     if not c:
         return HttpResponse('Course not found', status=404)
 
+    if request.method == 'POST':
+        course_description = request.POST.get('course_description')
+
+        print(request.user.is_authenticated)
+        if not request.user.is_authenticated:
+            return HttpResponse('You need to be logged in to update a course', status=401)
+        if CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=c).permission < 1:
+            return HttpResponse('You do not have permission to update this course', status=403)
+
+        print(course_id)
+        # Course.objects.get(course_id=course_id).update(course_description=course_description)
+        return HttpResponse('Course updated successfully', status=200)
+
     if c.public:
+        if not CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c):
+            CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=c, permission=0)
         return render(request, 'course.html', {'course': c})
     else:
         if not request.user.is_authenticated:
             return HttpResponse('You need to be logged in to view this course', status=401)
 
-        #TODO: Change permissions to be more secure
-        if CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=c).permission != 'owner':
+        # Check if user has permission to view course
+        try:
+            t = CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=c)
+        except CourseStudent.DoesNotExist:
+            t = None
+        print(t)
+        if not t:
             return HttpResponse('You do not have permission to view this course', status=403)
         return render(request, 'course.html', {'course': c})
