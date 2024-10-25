@@ -22,18 +22,16 @@
         <option>Sortuj wg postępu</option>
         <option>Sortuj wg kategorii</option>
     </select>
+    <input type="text" placeholder="KOD" aria-label="Wprowadź kod kursu" id="course-code">
+    <button class="btn-primary" aria-label="Dołącz do kursu" id="join-course">Dołącz do kursu</button>
 </div>
 <div class="course-grid">
     {% for course in courses %}
     <a href="/course/{{ course.id }}" class="course-card" aria-label="Zobacz szczegóły kursu: {{ course.name }}">
-        <div class="course-image" style="background-image: url('{{ course.image_url }}');" role="img" aria-label="{{ course.name }}"></div>
+        <div class="course-image" style="background-image: url('{{ course.image.url }}');" role="img" aria-label="{{ course.name }}"></div>
         <div class="course-info">
             <h2 class="course-title">{{ course.name }}</h2>
             <div class="course-category">{{ course.category }}</div>
-            <div class="course-progress">{{ course.progress }}% ukończenia</div>
-            <div class="progress-bar">
-                <div class="progress-bar-fill" style="width: {{ course.progress }}%;"></div>
-            </div>
         </div>
         <div class="course-arrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -47,10 +45,6 @@
             <div class="course-info">
                 <h2 class="course-title">Uwórz swój własny kurs!</h2>
                 <div class="course-category">Wszystko</div>
-                <div class="course-progress">100% ukończenia</div>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" style="width:100%;"></div>
-                </div>
             </div>
             <div class="course-arrow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="course-detail-container">
-    <form method="POST" id="course-form">
+    <form method="POST" id="course-form" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="course-create-container">
             <h1>Stwórz nowy kurs</h1>
@@ -24,6 +24,11 @@
             <div class="form-group">
                 <label for="is-public">Publiczny</label>
                 <input type="checkbox" id="is-public" name="is-public">
+            </div>
+            
+            <div class="form-group">
+                <label for="attachment-file">Zdjęcie</label>
+                <input type="file" id="attachment-file" name="attachment">
             </div>
             
             <div class="markdown-body" id="markdown-content"></div>

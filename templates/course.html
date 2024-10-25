@@ -1,28 +1,75 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ course.name }} - Course Overview{% endblock %}
+{% block title %}{{ course.name }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/course.css' %}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/course_create.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="course-detail-container">
     <div class="course-header">
         <h1 id="course-name-display">{{ course.name }}</h1>
-        <input type="text" id="course-name" value="{{ course.name }}" style="display: none;">
-        <button id="edit-toggle" class="btn-secondary">Edit Mode</button>
+        <button id="edit-toggle" class="btn-secondary" {% if coursestudent.permission < 1 %} style="display: none" {% endif %}>Edytuj</button>
     </div>
     <div class="course-description">
-        <h2>Course Description</h2>
         <div id="markdown-content" class="markdown-body"></div>
-        <textarea id="markdown-editor" style="display: none">{{ course.description }}</textarea>
+    </div>
+
+    <div id="editor" style="display: none">
+        <form method="POST" id="course-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="course-create-container">
+                <h1>Edytuj kurs</h1>
+                <div class="form-group">
+                    <label for="course-name">Nazwa kursu</label>
+                    <input type="text" id="course-name" placeholder="Nazwa kursu" name="course-name" value="{{ course.name }}">
+                </div>
+                <div class="form-group">
+                    <label for="markdown-editor">Opis kursu</label>
+                    <textarea id="markdown-editor" placeholder="Opis kursu w języku markdown" name="course-description">{{ course.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="is-public">Publiczny</label>
+                    <input type="checkbox" id="is-public" name="is-public" {% if course.public %} value="on" {% endif %}>
+                </div>
+                
+                <div class="form-group">
+                    <label for="attachment-file">Zdjęcie</label>
+                    <input type="file" id="attachment-file" name="attachment">
+                </div>
+                
+                <div class="markdown-body" id="markdown-content"></div>
+            </div>
+            <div class="course-actions">
+                <button id="save-changes" class="btn-primary" type="submit">Zapisz</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="course-attachments">
+        <h2>Załączniki: </h2>
+        <ul id="attachments-list">
+            {% for attachment in attachments %}
+            <li>
+                <div class="attachment-detail">
+                    <a href="{% url 'attachment' attachment.id %}" target="_blank">{{ attachment.name }}</a>
+                    <button class="btn-secondary delete-attachment" data-id="{{ attachment.id }}"><i class="fas fa-trash"></i></button>
+                </div>
+                
+            </li>
+            {% endfor %}
+        </ul>
+        <input type="file" id="attachment-file" name="attachment">
+        <button id="add-attachment" class="btn-secondary">Dodaj załącznik</button>
     </div>
     <div class="course-actions">
-        <button id="save-changes" class="btn-primary" style="display: none;">Save Changes</button>
-        <button class="btn-primary" id="leave-course">Leave course</button>
+        <button id="save-changes" class="btn-primary" style="display: none;">Zapisz</button>
+        <a class="btn-primary" href="{% url 'leave_course' course.id %}" id="leave-course">Opuść</a>
+        <a href="{% url 'course_users' course.id %}" class="btn-secondary">Użytkownicy</a>
     </div>
     <span id="content" style="display: none;">{{ course.description }}</span>
 </div>

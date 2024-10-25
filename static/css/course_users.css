@@ -1,0 +1,125 @@
+.course-users-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+h1 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.user-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.user-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--background-color);
+    border-radius: 4px;
+    box-shadow: var(--card-shadow);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-details h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.user-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.user-role {
+    display: flex;
+    align-items: center;
+}
+
+.role-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.role-badge.student {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.role-badge.teaching_assistant {
+    background-color: #2196F3;
+    color: white;
+}
+
+.role-badge.instructor {
+    background-color: #FFC107;
+    color: black;
+}
+
+.btn-edit,
+.btn-primary {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background-color: var(--navbar-color);
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: var(--progress-fill);
+}
+
+.action-buttons {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+.btn-primary {
+    background-color: var(--navbar-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--progress-fill);
+}
+
+.users-grid {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1rem;
+}

@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
+import json
 
-from StudentDashboard.models import Student, CourseStudent, Course
+from StudentDashboard.models import Student, CourseStudent, Course, Attachment
 
 
 def home(request):
@@ -94,25 +95,37 @@ def api_logout(request):
         return HttpResponse('User logged out successfully')
     redirect('login')
 
-def join_course(request):
-    if request.method != 'POST':
-        return HttpResponse('Method not allowed', status=405)
-
-    course_code = request.POST.get('course_code')
+def join_course(request, code):
     if not request.user.is_authenticated:
         return HttpResponse('You need to be logged in to join a course', status=401)
-    CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=Course.objects.get(course_code=course_code), permission='viewer')
-    return HttpResponse('Course joined successfully')
+    try:
+        course = Course.objects.get(code=code)
+    except Course.DoesNotExist:
+        return HttpResponse('Course not found', status=404)
+    if CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=course):
+        return HttpResponse('You are already enrolled in this course', status=400)
 
-def leave_course(request):
-    if request.method != 'POST':
-        return HttpResponse('Method not allowed', status=405)
+    CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=course, permission=0)
+    return redirect('course', course_id=course.id)
 
-    course_code = request.POST.get('course_code')
+
+def leave_course(request, course_id):
     if not request.user.is_authenticated:
         return HttpResponse('You need to be logged in to leave a course', status=401)
-    CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=Course.objects.get(course_code=course_code)).delete()
-    return HttpResponse('Course left successfully')
+
+    course = Course.objects.get(id=course_id)
+    if not course:
+        return HttpResponse('Course not found', status=404)
+
+    try:
+        courseStudent = CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=course)
+    except CourseStudent.DoesNotExist:
+        return HttpResponse('You are not enrolled in this course', status=404)
+
+    if courseStudent.permission == 2:
+        course.delete()
+    courseStudent.delete()
+    return redirect('home')
 
 def create_course(request):
     if not request.user.is_authenticated:
@@ -130,9 +143,26 @@ def create_course(request):
     else:
         is_public = False
 
+    file = None
+
+    if request.FILES:
+        file = request.FILES['attachment']
+        if (file.size / 1024) > 10000:
+            return HttpResponse('File too large', status=400)
+
+        #Only allow image files
+        if not file.content_type in ['image/jpeg', 'image/png']:
+            return HttpResponse('Invalid file type', status=400)
+
+
     if not request.user.is_authenticated:
         return HttpResponse('You need to be logged in to create a course', status=401)
-    t = Course.objects.create(name=course_name, description=course_description, public=is_public)
+    if file:
+        t = Course.objects.create(name=course_name, description=course_description, public=is_public, image=file)
+    else:
+        t = Course.objects.create(name=course_name, description=course_description, public=is_public)
+    t.set_code()
+    print(t.code)
     CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=t, permission=2)
     return redirect('course', course_id=t.id)
 
@@ -142,23 +172,66 @@ def course(request, course_id):
     if not c:
         return HttpResponse('Course not found', status=404)
 
-    if request.method == 'POST':
-        course_description = request.POST.get('course_description')
 
-        print(request.user.is_authenticated)
+    if request.method == "DELETE":
+        if not request.user.is_authenticated:
+            return HttpResponse('You need to be logged in to delete the attachment', status=401)
+        if CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c)[0].permission < 1:
+            return HttpResponse('You do not have permission to delete this attachment', status=403)
+
+        body = json.loads(request.body)
+
+        attachment = Attachment.objects.filter(id = body["attachment_id"])
+        if not attachment:
+            return HttpResponse('Attachment not found', status=404)
+        attachment.delete()
+        return HttpResponse('Course deleted successfully', status=200)
+
+    if request.method == 'POST' and request.FILES and 'file' in request.FILES:
+        if not request.user.is_authenticated:
+            return HttpResponse('You need to be logged in to upload an attachment', status=401)
+        if CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c)[0].permission < 1:
+            return HttpResponse('You do not have permission to upload an attachment', status=403)
+
+
+        print(request.FILES)
+        file = request.FILES['file']
+        if (file.size / 1024) > 10000:
+            return HttpResponse('File too large', status=400)
+
+        #Only allow pdf, image and text files
+        if not file.content_type in ['application/pdf', 'image/jpeg', 'image/png', 'text/plain']:
+            return HttpResponse('Invalid file type', status=400)
+
+        name = file.name
+        Attachment.objects.create(course=c, file=file, name=name)
+        return HttpResponse('Attachment uploaded successfully', status=200)
+
+    if request.method == 'POST':
+        course_description = request.POST.get('course-description')
+        name = request.POST.get('course-name')
+        image = request.FILES.get('attachment')
+
+
         if not request.user.is_authenticated:
             return HttpResponse('You need to be logged in to update a course', status=401)
         if CourseStudent.objects.get(student=Student.objects.get(user=request.user), course=c).permission < 1:
             return HttpResponse('You do not have permission to update this course', status=403)
 
-        print(course_id)
-        # Course.objects.get(course_id=course_id).update(course_description=course_description)
-        return HttpResponse('Course updated successfully', status=200)
+        if image:
+            c.image = image
+            c.save()
+        if name:
+            c.name = name
+            c.save()
+        if course_description:
+            c.description = course_description
+            c.save()
+        return redirect('course', course_id=c.id)
 
     if c.public:
         if not CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c):
             CourseStudent.objects.create(student=Student.objects.get(user=request.user), course=c, permission=0)
-        return render(request, 'course.html', {'course': c})
     else:
         if not request.user.is_authenticated:
             return HttpResponse('You need to be logged in to view this course', status=401)
@@ -171,4 +244,87 @@ def course(request, course_id):
         print(t)
         if not t:
             return HttpResponse('You do not have permission to view this course', status=403)
-        return render(request, 'course.html', {'course': c})
+
+    attachments = Attachment.objects.filter(course=c)
+    return render(request, 'course.html', {'course': c, 'attachments': attachments, "coursestudent": CourseStudent.objects.get(course=c, student=Student.objects.get(user=request.user))}, content_type='text/html; charset=utf-8')
+
+def course_users(request, course_id):
+    try:
+        c = Course.objects.get(id=course_id)
+    except Course.DoesNotExist:
+        return HttpResponse('Course not found', status=404)
+
+    if not request.user.is_authenticated:
+        return HttpResponse('You need to be logged in to view this page', status=401)
+
+    if not CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c):
+        return HttpResponse('You do not have permission to view this page', status=403)
+
+    users = CourseStudent.objects.filter(course=c)
+    print(users)
+    print(c.code)
+    return render(request, 'course_users.html', {'course': c, 'users': users})
+
+def edit_user(request, course_id, student_id):
+    c = Course.objects.get(id=course_id)
+    if not c:
+        return HttpResponse('Course not found', status=404)
+
+    if not request.user.is_authenticated:
+        return HttpResponse('You need to be logged in to view this page', status=401)
+
+    if CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c)[0].permission < 2:
+        return HttpResponse('You do not have permission to view this page', status=403)
+
+    if request.method == 'POST':
+        permission = request.POST.get('permission')
+        print(permission)
+        if permission == "-1":
+            CourseStudent.objects.get(student=Student.objects.get(student_id=student_id), course=c).delete()
+            return HttpResponse('User deleted successfully', status=200)
+        courseStudent = CourseStudent.objects.get(student=Student.objects.get(student_id=student_id), course=c)
+        courseStudent.permission = permission
+        courseStudent.save()
+        return HttpResponse('User updated successfully', status=200)
+
+    student = CourseStudent.objects.get(student=Student.objects.get(student_id=student_id), course=c)
+    return render(request, 'edit_user.html', {'course': c, 'user': student})
+
+def delete_attachment(request, course_id, path):
+    c = Course.objects.filter(id=course_id)
+    if not c.exists():
+        return HttpResponse('Course not found', status=404)
+
+    c = c[0]
+
+    if not request.user.is_authenticated:
+        return HttpResponse('You need to be logged in to delete an attachment', status=401)
+
+    if CourseStudent.objects.filter(student=Student.objects.get(user=request.user), course=c)[0].permission < 1:
+        return HttpResponse('You do not have permission to delete an attachment', status=403)
+
+    attachment = Attachment.objects.get(course=c, name=path)
+    attachment.delete()
+    return HttpResponse('Attachment deleted successfully', status=200)
+
+def attachment(request, attachment_id):
+    try:
+        attachment = Attachment.objects.get(id=attachment_id)
+    except Attachment.DoesNotExist:
+        return HttpResponse('Attachment not found', status=404)
+    print(attachment)
+
+    # Get attachment file extension
+    filename = attachment.file.name
+    ext = filename.split('.')[-1]
+    if ext == 'pdf':
+        content_type = 'application/pdf'
+    elif ext in ['jpg', 'jpeg']:
+        content_type = 'image/jpeg'
+    elif ext == 'png':
+        content_type = 'image/png'
+    else:
+        content_type = 'text/plain'
+
+    return HttpResponse(attachment.file, content_type=content_type)
+

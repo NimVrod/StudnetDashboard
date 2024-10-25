@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/edit_user.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="edit-user-container">
+    <h1>Edit User: {{ user.student.user.username }}</h1>
+    <form id="edit-user-form" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="user-role">Role</label>
+            <select id="user-role" name="permission" required>
+                <option value="0" {% if user.permission == "0" %}selected{% endif %}>VIEWER</option>
+                <option value="1" {% if user.permission == "1" %}selected{% endif %}>EDITOR</option>
+                <option value="2" {% if user.permission == "2" %}selected{% endif %}>OWNER</option>
+                <option value="-1" >Remove</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Save Changes</button>
+            <a href="{% url 'course_users' course.id %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

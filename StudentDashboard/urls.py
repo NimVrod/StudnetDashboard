@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,11 @@ urlpatterns = [
     path('profile/api/logout', views.api_logout, name='logout'),
     path('course/<int:course_id>/', views.course, name='course'),
     path('course/create_course/', views.create_course, name='create_course'),
-]
+    path('course/<int:course_id>/users/', views.course_users, name='course_users'),
+    path('course/<int:course_id>/edituser/<int:student_id>', views.edit_user, name='edit_user'),
+    path('join/<str:code>/', views.join_course, name='join_course'),
+    path('course/<int:course_id>/leave/', views.leave_course, name='leave_course'),
+    path('media/attachments/<int:attachment_id>', views.attachment, name='attachment'),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

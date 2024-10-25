@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Course Users - {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course_users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="course-users-container">
+    <h1>Użytkownicy zapisani w: {{ course.name }}</h1>
+    <div class="users-grid">
+        <div class="user-card">
+            <div class="user-info">
+                <div class="user-details">
+                    <h2>Zaproś innych</h2>
+                    <p>Użyj tego kodu aby zparosić innych użytkowników</p>
+                </div>
+            </div>
+            <div class="user-role">
+                <span class="role-badge 2">{{ course.code }}</span>
+            </div>
+            <a href="/join/{{ course.code }}" class="btn-edit">URL</a>
+        </div>
+        {% for user in users %}
+        <div class="user-card">
+            <div class="user-info">
+                <div class="user-details">
+                    <h2>{{ user.student.user.username }}</h2>
+                    <p>{{ user.student.user.email }}</p>
+                    <p>{{ user.student.user.first_name }} {{ user.student.user.last_name }}</p>
+                </div>
+            </div>
+            <div class="user-role">
+                <span class="role-badge {{ user.permission }}">{{ user.get_permission_string }}</span>
+            </div>
+            <a href="{% url "edit_user" user.course.id user.student_id %}" class="btn-edit">Edit</a>
+        </div>
+            
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

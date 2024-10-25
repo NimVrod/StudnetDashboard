@@ -24,53 +24,83 @@ document.addEventListener('DOMContentLoaded', function() {
     const editor = document.getElementById("markdown-editor");
     const editButton = document.getElementById("edit-toggle");
     const saveButton = document.getElementById("save-changes");
+    const addAttachmentButton = document.getElementById("add-attachment");
+    const deleteAttachmentButton = document.querySelectorAll(".delete-attachment");
+    const form = document.getElementById("editor");
+
 
     // Initial render of markdown content
     markdown.innerHTML = marked.parse(text);
 
     editButton.addEventListener('click', () => {
-        if (editor.style.display === "none") {
+        if (form.style.display === "none") {
             // Switch to edit mode
-            editor.style.display = "block";
-            markdown.style.display = "none";
-            editor.value = text;
             editButton.innerHTML = "Preview";
             saveButton.style.display = "block";
+            form.style.display = "block";
         } else {
             // Switch to preview mode
             text = editor.value;
-            markdown.innerHTML = marked.parse(text);
-            editor.style.display = "none";
             markdown.style.display = "block";
+            markdown.innerHTML = marked.parse(text);
             editButton.innerHTML = "Edit";
             saveButton.style.display = "none";
+            form.style.display = "none";
         }
     });
 
     saveButton.addEventListener('click', () => {
-        // Save changes
-        text = editor.value;
-        document.getElementById("content").innerHTML = text;
-        markdown.innerHTML = marked.parse(text);
-        editor.style.display = "none";
-        markdown.style.display = "block";
-        editButton.innerHTML = "Edit";
-        saveButton.style.display = "none";
+        window.location.reload();
+    });
 
-        // Send changes to server
-        const csrftoken = getCookie('csrftoken');
-        fetch(window.location.pathname, {
+    addAttachmentButton.addEventListener('click', () => {
+        const attachmentInput = document.getElementById("attachment-file");
+        const file = attachmentInput.files[0]
+
+        if (file){
+            const formData = new FormData();
+            formData.append('file', file);
+            const csrftoken = getCookie('csrftoken');
+
+            console.log("Uploading attachment...");
+
+            fetch(window.location.href, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                course_id: window.location.pathname.split("/")[2],
-                course_description: text
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+            body: formData
             })
-        }).then(response => {
-            console.log(response);
+            .then(response => response.json())
+            .then(data => {
+                //refresh page
+                console.log(data);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+
+    deleteAttachmentButton.forEach(button => {
+        button.addEventListener('click', () => {
+            const csrftoken = getCookie('csrftoken');
+            const attachmentId = button.getAttribute("data-id");
+
+            fetch(window.location.href, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    attachment_id: attachmentId
+                })
+            }).then(response => {
+                console.log(response);
+                button.parentElement.remove();
+            });
         });
     });
 });
