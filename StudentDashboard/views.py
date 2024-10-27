@@ -24,9 +24,8 @@ def home(request):
 
 def api_login(request):
     if request.user.is_authenticated:
-        #DEBBUG
         pass
-        #return HttpResponse('You are already logged in')
+        return HttpResponse('You are already logged in')
 
     if request.method != 'POST':
         return render(request, 'registration/login.html')
@@ -87,12 +86,12 @@ def profile(request):
         student.bio = bio
         student.save()
 
-        new_passowrd = request.POST.get('new_password')
+        new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_new_password')
-        if new_passowrd != confirm_password and new_passowrd:
+        if new_password != confirm_password and new_password:
             return HttpResponse('Passwords do not match', status=400)
-        if new_passowrd:
-            request.user.set_password(new_passowrd)
+        if new_password:
+            request.user.set_password(new_password)
             request.user.save()
 
         username = request.POST.get('username')
@@ -309,7 +308,7 @@ def edit_user(request, course_id, student_id):
         courseStudent = CourseStudent.objects.get(student=Student.objects.get(student_id=student_id), course=c)
         courseStudent.permission = permission
         courseStudent.save()
-        return HttpResponse('User updated successfully', status=200)
+        return redirect('course_users', course_id=course_id)
 
     student = CourseStudent.objects.get(student=Student.objects.get(student_id=student_id), course=c)
     return render(request, 'edit_user.html', {'course': c, 'user': student})

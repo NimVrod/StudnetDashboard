@@ -57,18 +57,18 @@
             <li>
                 <div class="attachment-detail">
                     <a href="{% url 'attachment' attachment.id %}" target="_blank">{{ attachment.name }}</a>
-                    <button class="btn-secondary delete-attachment" data-id="{{ attachment.id }}"><i class="fas fa-trash"></i></button>
+                    {% if coursestudent.permission > 1 %}<button class="btn-secondary delete-attachment" data-id="{{ attachment.id }}"><i class="fas fa-trash"></i></button>{% endif %}
                 </div>
                 
             </li>
             {% endfor %}
         </ul>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" {% if coursestudent.permission < 1 %} style="display: none" {% endif %}>
             {% csrf_token %}
             <input type="file" id="attachment-file" name="file">
             <button id="add-attachment" class="btn-secondary" type="submit">Dodaj załącznik</button>
         </form>
-        
+
     </div>
     <div class="course-actions">
         <button id="save-changes" class="btn-primary" style="display: none;">Zapisz</button>
