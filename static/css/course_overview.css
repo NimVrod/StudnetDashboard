@@ -151,3 +151,16 @@ h1 {
 .btn-secondary:hover {
     background-color: var(--background-color);
 }
+
+.contact-list {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    height: 40px;
+}
+
+.contact-svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--text-color);
+}

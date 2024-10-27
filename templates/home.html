@@ -10,18 +10,6 @@
 {% block content %}
 <h1>Przegląd kursów</h1>
 <div class="filters">
-    <select aria-label="Filtruj kursy">
-        <option>Wszystkie</option>
-        <option>Elektronika</option>
-        <option>Telekomunikacja</option>
-        <option>Programowanie</option>
-    </select>
-    <input type="text" placeholder="Wyszukaj" aria-label="Wyszukaj kursy">
-    <select aria-label="Sortuj kursy">
-        <option>Sortuj wg nazwy kursu</option>
-        <option>Sortuj wg postępu</option>
-        <option>Sortuj wg kategorii</option>
-    </select>
     <input type="text" placeholder="KOD" aria-label="Wprowadź kod kursu" id="course-code">
     <button class="btn-primary" aria-label="Dołącz do kursu" id="join-course">Dołącz do kursu</button>
 </div>
@@ -31,7 +19,6 @@
         <div class="course-image" style="background-image: url('{{ course.image.url }}');" role="img" aria-label="{{ course.name }}"></div>
         <div class="course-info">
             <h2 class="course-title">{{ course.name }}</h2>
-            <div class="course-category">{{ course.category }}</div>
         </div>
         <div class="course-arrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -41,7 +28,7 @@
     </a>
     {% endfor %}
     <a href="/course/create_course/" class="course-card" aria-label="Zobacz szczegóły kursu: Utwórz">
-            <div class="course-image" style="background-image: url('{{ course.image_url }}');" role="img" aria-label="Utwórz"></div>
+            <div class="course-image" style="background-image: url('https://pngtree.com/so/plus');" role="img" aria-label="Utwórz"></div>
             <div class="course-info">
                 <h2 class="course-title">Uwórz swój własny kurs!</h2>
                 <div class="course-category">Wszystko</div>
@@ -53,6 +40,12 @@
             </div>
         </a>
 </div>
+    <div id="Kontakt" >
+    <h2>Kontakt</h2>
+        <div class="contact-list">
+            <a href="https://github.com/NimVrod/StudnetDashboard">Github</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}

@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const attachmentInput = document.getElementById("attachment-file");
         const file = attachmentInput.files[0]
 
+        console.log("File selected: ", file);
+        console.log(attachmentInput.files);
+
         if (file){
             const formData = new FormData();
             formData.append('file', file);

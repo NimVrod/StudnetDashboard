@@ -63,8 +63,12 @@
             </li>
             {% endfor %}
         </ul>
-        <input type="file" id="attachment-file" name="attachment">
-        <button id="add-attachment" class="btn-secondary">Dodaj załącznik</button>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="attachment-file" name="file">
+            <button id="add-attachment" class="btn-secondary" type="submit">Dodaj załącznik</button>
+        </form>
+        
     </div>
     <div class="course-actions">
         <button id="save-changes" class="btn-primary" style="display: none;">Zapisz</button>

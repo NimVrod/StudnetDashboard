@@ -78,6 +78,31 @@ def profile(request):
         return redirect('login')
 
 
+    if request.method == 'POST':
+        if request.POST.get('current_password') and not request.user.check_password(request.POST.get('current_password')):
+            return HttpResponse('Incorrect password', status=400)
+
+        bio = request.POST.get('bio')
+        student = Student.objects.get(user=request.user)
+        student.bio = bio
+        student.save()
+
+        new_passowrd = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_new_password')
+        if new_passowrd != confirm_password and new_passowrd:
+            return HttpResponse('Passwords do not match', status=400)
+        if new_passowrd:
+            request.user.set_password(new_passowrd)
+            request.user.save()
+
+        username = request.POST.get('username')
+        if username:
+            request.user.username = username
+            request.user.save()
+
+
+        return redirect('profile')
+
     student = Student.objects.get(user=request.user)
     user = {
         'username': request.user.username,
@@ -85,7 +110,6 @@ def profile(request):
         'last_name': request.user.last_name,
         'email': request.user.email,
         'bio' : student.bio,
-        'image_url': "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o",
     }
     return render(request, 'profile.html', {'user': user})
 
@@ -205,7 +229,7 @@ def course(request, course_id):
 
         name = file.name
         Attachment.objects.create(course=c, file=file, name=name)
-        return HttpResponse('Attachment uploaded successfully', status=200)
+        return redirect('course', course_id=c.id)
 
     if request.method == 'POST':
         course_description = request.POST.get('course-description')
