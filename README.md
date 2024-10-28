@@ -22,3 +22,10 @@ This guide will help you set up and run the StudentDashboard Django project on y
    python manage.py migrate
    python manage.py runserver
    ```
+
+### Admin   
+In order of accessing the admin page you need to create a superuser
+
+```bash
+python manage.py createsuperuser
+```
