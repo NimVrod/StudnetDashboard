@@ -36,6 +36,7 @@ urlpatterns = [
     path('join/<str:code>/', views.join_course, name='join_course'),
     path('course/<int:course_id>/leave/', views.leave_course, name='leave_course'),
     path('media/attachments/<int:attachment_id>', views.attachment, name='attachment'),
+    path('error/<str:error_code>/<str:error_message>/<str:error_description>', views.error_view, name='error'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

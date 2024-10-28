@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     editButton.addEventListener('click', () => {
         if (form.style.display === "none") {
             // Switch to edit mode
-            editButton.innerHTML = "Preview";
+            editButton.innerHTML = "Zobacz";
             saveButton.style.display = "block";
             form.style.display = "block";
         } else {
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text = editor.value;
             markdown.style.display = "block";
             markdown.innerHTML = marked.parse(text);
-            editButton.innerHTML = "Edit";
+            editButton.innerHTML = "Edytuj";
             saveButton.style.display = "none";
             form.style.display = "none";
         }

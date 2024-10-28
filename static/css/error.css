@@ -1,0 +1,95 @@
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px); /* Adjust based on your navbar height */
+    padding: 2rem;
+    background-color: var(--background-color);
+}
+
+.error-content {
+    max-width: 600px;
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--navbar-color);
+    margin: 0;
+    line-height: 1;
+}
+
+.error-message {
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 1rem 0;
+}
+
+.error-description {
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: var(--navbar-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--progress-fill);
+}
+
+.btn-secondary {
+    background-color: var(--card-background);
+    color: var(--navbar-color);
+    border: 1px solid var(--navbar-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--background-color);
+}
+
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 4rem;
+    }
+
+    .error-message {
+        font-size: 1.5rem;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Error - {{ error_code }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/error.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <h1 class="error-code">{{ error_code }}</h1>
+        <h2 class="error-message">{{ error_message }}</h2>
+        <p class="error-description">{{ error_description }}</p>
+        <div class="error-actions">
+            <a href="{% url 'home' %}" class="btn-primary">Wróć na stronę główną</a>
+            <button class="btn-secondary" onclick="window.history.back()">Cofnij</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}
