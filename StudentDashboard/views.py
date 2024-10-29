@@ -95,7 +95,11 @@ def register(request):
         return redirect(error_view, 400, 'Zajęte', 'Nazwa użytkownika lub email jest już zajęty')
 
     # Create user account
-    User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+    try:
+        User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+    except Exception as e:
+        print(e)
+        return redirect(error_view, 400, 'Bad Request', 'Nie udało się stworzyć użytkownika')
     Student.objects.create(user=User.objects.get(username=username), bio=f"Jestem tu nowy {datetime.now()}")
     login(request, authenticate(username=username, password=password))
     return redirect('profile')
