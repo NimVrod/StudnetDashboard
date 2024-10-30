@@ -41,7 +41,7 @@ def home(request):
     if request.user.is_authenticated:
         permissions = CourseStudent.objects.filter(student=Student.objects.get(user=request.user))
         for permission in permissions:
-            if permission.permission >= 0:
+            if permission.permission >= 0 and permission.course not in courses:
                 courses.append(Course.objects.get(id=permission.course.id))
     return render(request, 'home.html', {'courses': courses})
 
