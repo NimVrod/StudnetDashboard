@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Course Users - {{ course.title }}{% endblock %}
+{% block title %}Użytkownicy - {{ course.title }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/course_users.css' %}">
@@ -35,7 +35,7 @@
             <div class="user-role">
                 <span class="role-badge {{ user.permission }}">{{ user.get_permission_string }}</span>
             </div>
-            <a href="{% url "edit_user" user.course.id user.student_id %}" class="btn-edit">Edit</a>
+            <a href="{% url "edit_user" user.course.id user.student_id %}" class="btn-edit">Edytuj</a>
         </div>
             
         {% endfor %}

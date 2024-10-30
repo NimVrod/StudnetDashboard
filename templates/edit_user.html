@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}Edytuj użytkownika{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/edit_user.css' %}">
@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="edit-user-container">
-    <h1>Edit User: {{ user.student.user.username }}</h1>
+    <h1>Edytuj użytkownika: {{ user.student.user.username }}</h1>
     <form id="edit-user-form" method="POST">
         {% csrf_token %}
         <div class="form-group">
@@ -18,12 +18,12 @@
                 <option value="0" {% if user.permission == "0" %}selected{% endif %}>VIEWER</option>
                 <option value="1" {% if user.permission == "1" %}selected{% endif %}>EDITOR</option>
                 <option value="2" {% if user.permission == "2" %}selected{% endif %}>OWNER</option>
-                <option value="-1" >Remove</option>
+                <option value="-1" >Wyrzuć</option>
             </select>
         </div>
         <div class="form-actions">
-            <button type="submit" class="btn-primary">Save Changes</button>
-            <a href="{% url 'course_users' course.id %}" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Zapisz zmiany</button>
+            <a href="{% url 'course_users' course.id %}" class="btn-secondary">Anuluj</a>
         </div>
     </form>
 </div>
