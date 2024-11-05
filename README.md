@@ -29,3 +29,5 @@ In order of accessing the admin page you need to create a superuser
 ```bash
 python manage.py createsuperuser
 ```
+
+Made for WDP course
